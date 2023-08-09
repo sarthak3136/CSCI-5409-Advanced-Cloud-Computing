@@ -1,0 +1,37 @@
+steps:
+  # Docker build
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build'
+   # args: ['build', '-t', 'us-east1-docker.pkg.dev/csci5409kubernetes/kubernetesa3artifactrepo/assignment-3', '.']
+    args: ['build', '-t', 'us-docker.pkg.dev/csci5409kubernetes/assignment3repo/images:${SHORT_SHA}', '.']
+
+  # Docker push to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push'
+    #args: ['push', 'us-east1-docker.pkg.dev/csci5409kubernetes/kubernetesa3artifactrepo/assignment-3']
+    args: ['push', 'us-docker.pkg.dev/csci5409kubernetes/assignment3repo/images:${SHORT_SHA}']
+  
+  #Persistent Volume
+  - name: 'gcr.io/cloud-builders/kubectl'
+    id: 'Persistent Volume'
+    env:
+      - "CLOUDSDK_COMPUTE_ZONE=us-central1"
+      - "CLOUDSDK_CONTAINER_CLUSTER=fresh-cluster"
+    args: ['apply', '-f', 'sarthak-pvc.yaml']
+  
+  # Deployment to GKE
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    id: 'Deployment'
+    args: 
+      [
+        'run',
+        '--filename=deployment.yaml',
+        #'--image=us-east1-docker.pkg.dev/csci5409kubernetes/kubernetesa3artifactrepo/assignment-3',
+        '--image=us-docker.pkg.dev/csci5409kubernetes/assignment3repo/images:${SHORT_SHA}',
+        '--location=us-central1',
+        '--cluster=fresh-cluster'
+      ]
+
+# Storing the images in the Google Artifact Registry
+images:
+  - us-docker.pkg.dev/csci5409kubernetes/assignment3repo/images:${SHORT_SHA}

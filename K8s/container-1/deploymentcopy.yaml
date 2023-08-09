@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: container1
+  labels:
+    app: container1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: container1
+  template:
+    metadata:
+      name: container1-pods
+      labels:
+        app: container1
+    spec:
+      containers:
+        - name: container1-node
+          image:  us-docker.pkg.dev/csci5409kubernetes/assignment3repo/images
+          ports:
+            - containerPort: 6000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: container1-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: container1
+  ports:
+    - port: 80
+      targetPort: 6000

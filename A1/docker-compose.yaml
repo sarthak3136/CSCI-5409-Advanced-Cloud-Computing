@@ -1,0 +1,14 @@
+services:
+  container1:
+    image: sardock01/container1
+    ports:
+      - "6000:6000"
+    volumes:
+      - .:/apps/file
+  
+  container2:
+    image: sardock01/container2
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/apps/file

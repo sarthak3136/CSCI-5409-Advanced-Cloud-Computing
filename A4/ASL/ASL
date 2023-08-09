@@ -1,0 +1,41 @@
+{
+  "Comment": "Assignment 4 Encryption State Machine",
+  "StartAt": "ProcessEncryption",
+  "States": {
+    "ProcessEncryption": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.action",
+          "StringEquals": "sha256",
+          "Next": "SHA256Encryption"
+        },
+        {
+          "Variable": "$.action",
+          "StringEquals": "md5",
+          "Next": "MD5Encryption"
+        },
+        {
+          "Variable": "$.action",
+          "StringEquals": "bcrypt",
+          "Next": "BcryptEncryption"
+        }
+      ]
+    },
+    "SHA256Encryption": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:430910936224:function:SHA256Encryption",
+      "End": true
+    },
+    "MD5Encryption": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:430910936224:function:MD5Encryption",
+      "End": true
+    },
+    "BcryptEncryption": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:430910936224:function:BcryptEncryption",
+      "End": true
+    }
+  }
+}
